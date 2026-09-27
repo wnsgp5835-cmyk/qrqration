@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>책 속 한 문장 - 오송도서관 북큐레이션</title>
+  <!-- Google Fonts & Font Awesome -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Maru+Buri:wght@300;400;600;700&family=Noto+Sans+KR:wght@300;400;500;700&family=Playfair+Display:ital,wght@1,600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    :root {
+      --bg-color: #f7f4ee;
+      --card-bg: #ffffff;
+      --quote-bg: #fffbf5;
+      --primary-color: #1e293b;
+      --accent-color: #b85d38;
+      --accent-soft: rgba(184, 93, 56, 0.08);
+      --text-main: #2d2a26;
+      --text-sub: #69635b;
+      --text-muted: #948c82;
+      --tag-child: #2e6f40;
+      --tag-child-bg: #eaf5ed;
+      --tag-adult: #2b5282;
+      --tag-adult-bg: #edf2f9;
+      --border-color: #e8e2d8;
+      --border-quote: #ebdccb;
+      --shadow-sm: 0 4px 12px rgba(45, 42, 38, 0.04);
+      --shadow-md: 0 10px 28px rgba(45, 42, 38, 0.08);
+      --shadow-hover: 0 18px 36px rgba(45, 42, 38, 0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Noto Sans KR', sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      line-height: 1.6;
+      padding-bottom: 80px;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Header */
+    header {
+      text-align: center;
+      padding: 80px 20px 50px;
+      background: linear-gradient(180deg, #ede6db 0%, var(--bg-color) 100%);
+      position: relative;
+    }
+
+    header::after {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60px;
+      height: 3px;
+      background-color: var(--accent-color);
+      border-radius: 2px;
+    }
+
+    .badge-sub {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.82rem;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      color: var(--accent-color);
+      font-weight: 700;
+      margin-bottom: 12px;
+      background: var(--accent-soft);
+      padding: 5px 14px;
+      border-radius: 30px;
+      border: 1px solid rgba(184, 93, 56, 0.2);
+    }
+
+    h1 {
+      font-family: 'Maru Buri', serif;
+      font-size: 2.6rem;
+      color: var(--primary-color);
+      font-weight: 700;
+      margin-bottom: 16px;
+      letter-spacing: -1px;
+    }
+
+    .header-desc {
+      font-size: 1.08rem;
+      color: var(--text-sub);
+      max-width: 580px;
+      margin: 0 auto;
+      word-break: keep-all;
+      line-height: 1.7;
+    }
+
+    /* Filters */
+    .filter-wrap {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin: 36px 0 10px;
+    }
+
+    .filter-btn {
+      background: #ffffff;
+      border: 1px solid var(--border-color);
+      padding: 9px 22px;
+      border-radius: 30px;
+      font-size: 0.92rem;
+      cursor: pointer;
+      font-weight: 500;
+      color: var(--text-sub);
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: var(--shadow-sm);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .filter-btn:hover {
+      border-color: var(--accent-color);
+      color: var(--accent-color);
+      transform: translateY(-1px);
+    }
+
+    .filter-btn.active {
+      background: var(--accent-color);
+      color: #ffffff;
+      border-color: var(--accent-color);
+      box-shadow: 0 4px 14px rgba(184, 93, 56, 0.3);
+    }
+
+    /* Container & Grid */
+    .container {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    .curation-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+      gap: 32px;
+      margin-top: 20px;
+    }
+
+    /* Book Card */
+    .book-card {
+      background-color: var(--card-bg);
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: var(--shadow-md);
+      border: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      cursor: pointer;
+      position: relative;
+    }
+
+    .book-card:hover {
+      transform: translateY(-8px);
+      box-shadow: var(--shadow-hover);
+      border-color: #d6cbbe;
+    }
+
+    /* Quote Area - The Star of the Card */
+    .quote-box {
+      background: var(--quote-bg);
+      padding: 34px 28px 26px;
+      border-bottom: 1px dashed var(--border-quote);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      min-height: 150px;
+    }
+
+    .quote-mark {
+      position: absolute;
+      top: 14px;
+      left: 20px;
+      font-family: 'Playfair Display', serif;
+      font-size: 3rem;
+      line-height: 1;
+      color: #dfcdba;
+      user-select: none;
+      pointer-events: none;
+    }
+
+    .quote-pill {
+      display: inline-block;
+      align-self: flex-start;
+      font-size: 0.72rem;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      font-weight: 700;
+      color: var(--accent-color);
+      margin-bottom: 10px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .quote-text {
+      font-family: 'Maru Buri', serif;
+      font-size: 1.16rem;
+      font-weight: 600;
+      color: #241d17;
+      line-height: 1.78;
+      word-break: keep-all;
+      position: relative;
+      z-index: 1;
+      letter-spacing: -0.2px;
+    }
+
+    /* Book Detail Body */
+    .book-body {
+      padding: 24px;
+      display: flex;
+      gap: 20px;
+      flex: 1;
+      align-items: stretch;
+      background: #ffffff;
+    }
+
+    /* Realistic Book Spine Effect */
+    .cover-wrapper {
+      width: 108px;
+      height: 156px;
+      flex-shrink: 0;
+      border-radius: 5px 8px 8px 5px;
+      overflow: hidden;
+      background: #eae5de;
+      box-shadow: -2px 0 0 rgba(0,0,0,0.06), 4px 6px 16px rgba(0,0,0,0.16);
+      position: relative;
+      transition: transform 0.3s ease;
+    }
+
+    .book-card:hover .cover-wrapper {
+      transform: scale(1.03) rotate(-1deg);
+    }
+
+    /* Spine Fold Simulation */
+    .cover-wrapper::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      width: 7px;
+      background: linear-gradient(90deg, rgba(0,0,0,0.18) 0%, rgba(255,255,255,0.25) 40%, rgba(0,0,0,0.08) 100%);
+      pointer-events: none;
+    }
+
+    .book-cover {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .book-info {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .location-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.76rem;
+      padding: 3px 10px;
+      border-radius: 14px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      align-self: flex-start;
+    }
+
+    .tag-child {
+      background-color: var(--tag-child-bg);
+      color: var(--tag-child);
+    }
+
+    .tag-adult {
+      background-color: var(--tag-adult-bg);
+      color: var(--tag-adult);
+    }
+
+    .book-title {
+      font-family: 'Maru Buri', serif;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--primary-color);
+      margin-bottom: 6px;
+      line-height: 1.4;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      letter-spacing: -0.3px;
+    }
+
+    .book-author {
+      font-size: 0.88rem;
+      color: var(--text-sub);
+      margin-bottom: 4px;
+      display: -webkit-box;
+      -webkit-line-clamp: 1;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .book-meta {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+    }
+
+    .call-number {
+      margin-top: 12px;
+      padding: 6px 10px;
+      background: #f7f5f0;
+      border-radius: 8px;
+      border: 1px solid #ebe5dc;
+      font-size: 0.78rem;
+      color: var(--text-sub);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .call-number span {
+      font-family: monospace;
+      font-weight: 700;
+      color: #1e293b;
+      word-break: break-all;
+    }
+
+    .card-footer {
+      padding: 10px 24px;
+      background: #faf8f5;
+      border-top: 1px solid #f2ece3;
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      font-size: 0.8rem;
+      color: var(--accent-color);
+      font-weight: 600;
+      gap: 4px;
+      transition: gap 0.2s ease;
+    }
+
+    .book-card:hover .card-footer {
+      gap: 8px;
+    }
+
+    /* Modal */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(22, 20, 18, 0.7);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      padding: 20px;
+      backdrop-filter: blur(4px);
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal-content {
+      background: #ffffff;
+      width: 100%;
+      max-width: 620px;
+      border-radius: 22px;
+      overflow: hidden;
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.35);
+      animation: modalFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+      border: 1px solid var(--border-color);
+    }
+
+    @keyframes modalFadeIn {
+      from { transform: translateY(24px) scale(0.97); opacity: 0; }
+      to { transform: translateY(0) scale(1); opacity: 1; }
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 18px;
+      right: 20px;
+      background: #f4ede3;
+      border: none;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      font-size: 1.2rem;
+      cursor: pointer;
+      color: #555;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+    }
+
+    .modal-close:hover {
+      background: var(--accent-color);
+      color: #fff;
+    }
+
+    .modal-body {
+      padding: 38px 32px 30px;
+      max-height: 85vh;
+      overflow-y: auto;
+    }
+
+    .modal-quote-wrap {
+      background: var(--quote-bg);
+      border: 1px solid var(--border-quote);
+      border-radius: 16px;
+      padding: 26px 24px;
+      margin-bottom: 24px;
+      position: relative;
+    }
+
+    .modal-quote {
+      font-family: 'Maru Buri', serif;
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: #2b1f17;
+      line-height: 1.8;
+      position: relative;
+      z-index: 1;
+    }
+
+    .modal-desc {
+      font-size: 0.95rem;
+      color: #4f4a43;
+      line-height: 1.7;
+      margin-bottom: 24px;
+      padding-left: 4px;
+    }
+
+    .modal-grid {
+      display: grid;
+      grid-template-columns: 130px 1fr;
+      gap: 24px;
+      background: #fbf9f5;
+      padding: 22px;
+      border-radius: 14px;
+      border: 1px solid var(--border-color);
+    }
+
+    .modal-grid .cover-wrapper {
+      width: 130px;
+      height: 190px;
+    }
+
+    .modal-meta-item {
+      font-size: 0.88rem;
+      margin-bottom: 9px;
+      line-height: 1.45;
+      display: flex;
+      align-items: baseline;
+    }
+
+    .modal-meta-item b {
+      color: #736b63;
+      font-weight: 600;
+      display: inline-block;
+      width: 72px;
+      flex-shrink: 0;
+      font-size: 0.82rem;
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 22px;
+    }
+
+    .action-btn {
+      padding: 9px 18px;
+      border-radius: 20px;
+      font-size: 0.86rem;
+      font-weight: 500;
+      cursor: pointer;
+      border: 1px solid var(--border-color);
+      background: #fff;
+      color: var(--text-sub);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+
+    .action-btn:hover {
+      border-color: var(--accent-color);
+      color: var(--accent-color);
+    }
+
+    @media (max-width: 600px) {
+      header {
+        padding: 50px 16px 36px;
+      }
+      h1 {
+        font-size: 2rem;
+      }
+      .curation-grid {
+        grid-template-columns: 1fr;
+      }
+      .modal-grid {
+        grid-template-columns: 1fr;
+        justify-items: center;
+      }
+      .modal-body {
+        padding: 28px 20px 22px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="badge-sub"><i class="fa-solid fa-bookmark"></i> OSONG LIBRARY CURATION</div>
+    <h1>책 속 한 문장</h1>
+    <p class="header-desc">
+      문장 한 줄이 마음에 닿아 책 한 권의 위로가 되는 시간.<br>
+      오송도서관 서가에서 반짝이는 문장들을 만나보세요.
+    </p>
+
+    <div class="filter-wrap">
+      <button class="filter-btn active" onclick="filterBooks('all')"><i class="fa-solid fa-border-all"></i> 전체보기 (10)</button>
+      <button class="filter-btn" onclick="filterBooks('어린이자료실')"><i class="fa-solid fa-seedling"></i> 어린이자료실 (5)</button>
+      <button class="filter-btn" onclick="filterBooks('종합자료실')"><i class="fa-solid fa-book-open-reader"></i> 종합자료실 (5)</button>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="curation-grid" id="bookGrid">
+      <!-- 자바스크립트로 렌더링 -->
+    </div>
+  </main>
+
+  <!-- 상세보기 모달 -->
+  <div class="modal-overlay" id="detailModal" onclick="closeModal(event)">
+    <div class="modal-content" onclick="event.stopPropagation()">
+      <button class="modal-close" onclick="closeModal()" title="닫기">&times;</button>
+      <div class="modal-body" id="modalBody">
+        <!-- 모달 내용 동적 생성 -->
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 도서관 정보나루 인증키
+    const AUTH_KEY = '6961fb67d94e3243631663f0f71032d69ab158afda6e3743fbdbf1a17f17371e';
+
+    // 엑셀 목록 기반 도서 10종 데이터
+    const books = [
+      {
+        no: 1,
+        callNo: "유 808.91-북17ㅂ-112",
+        section: "어린이자료실",
+        title: "책이야? 비행기야?",
+        author: "마이크 헨슨 글 , 케이티 버넌 그림 ; 이루리 옮김",
+        publisher: "북극곰",
+        pubYear: "2026",
+        isbn: "9791165884680",
+        coverUrl: "https://image.aladin.co.kr/product/38361/44/cover500/k072135363_1.jpg",
+        quote: "“책을 펼치고 날리면 비행기가 되고, 머리에 쓰면 모자가 되고, 얼굴에 대면 꼬마 괴물이 돼요!”",
+        desc: "책장을 펼치는 순간 비행기, 모자, 괴물, 공룡으로 변신하며 아이들에게 책 읽기가 세상에서 가장 신나는 놀이가 되는 체험형 그림책."
+      },
+      {
+        no: 2,
+        callNo: "유 813.8-천67ㅁ",
+        section: "어린이자료실",
+        title: "매일매일 여름방학이면 좋겠어",
+        author: "천은진 글·그림",
+        publisher: "그린북",
+        pubYear: "2026",
+        isbn: "9788955888874",
+        coverUrl: "https://image.aladin.co.kr/product/39823/1/cover500/8955888872_1.jpg",
+        quote: "“여름처럼 재밌고 달처럼 언제나 나를 지켜 주는 친구들과 함께라면, 깜깜한 밤 숲도 무섭지 않아!”",
+        desc: "이사 간 단짝 친구를 찾아 어른들 없이 떠난 다람쥐 다린이와 친구들의 여름밤 여정 속에서 피어나는 다정한 우정과 성장의 기억."
+      },
+      {
+        no: 3,
+        callNo: "초 991.1-박78ㅁ-10",
+        section: "어린이자료실",
+        title: "무적 이순신. 10: 무적의 전라좌수영",
+        author: "박지연 ; 박한 [공]글 ; 김기수 ; 한지혜 [공]그림",
+        publisher: "아울북",
+        pubYear: "2026",
+        isbn: "9791173571497",
+        coverUrl: "https://contents.kyobobook.co.kr/sih/fit-in/400x0/pdt/9791173571497.jpg",
+        quote: "“밤낮으로 거북선을 다듬고 훈련에 온 힘을 쏟으며, 어떤 거친 파도 앞에서도 나라와 백성을 지켜내리라.”",
+        desc: "전라좌수사로 부임한 이순신과 좌수영 군사들이 나라를 덮쳐오는 위기 속에서 비밀 병기 거북선을 완성하고 바다를 수호하는 뜨거운 역사 동화."
+      },
+      {
+        no: 4,
+        callNo: "초 410-서78ㄸ=2",
+        section: "어린이자료실",
+        title: "딸기 시 포도 분이 시작됐어요",
+        author: "서지원 글 ; 김정진 그림",
+        publisher: "글고래",
+        pubYear: "2026",
+        isbn: "9791173712395",
+        coverUrl: "https://image.aladin.co.kr/product/39942/68/cover500/k692130328_1.jpg",
+        quote: "“숫자가 모두 사라진 세상, 숫자란 단순한 셈이 아니라 우리가 함께 살아가기 위해 만든 다정한 약속이었어.”",
+        desc: "수학을 싫어하던 주인공이 숫자가 송두리째 사라진 엉뚱한 세상에서 겪는 모험을 통해 수학의 진정한 가치와 삶의 질서를 깨달아가는 이야기."
+      },
+      {
+        no: 5,
+        callNo: "초 833.8-누872ㄷ=2",
+        section: "어린이자료실",
+        title: "독후감 숙제가 끝나지 않아",
+        author: "누카가 미오 글 ; 토티 그림 ; 김지영 옮김",
+        publisher: "다산어린이",
+        pubYear: "2026",
+        isbn: "9791130681887",
+        coverUrl: "https://image.aladin.co.kr/product/39738/21/cover500/k652130909_1.jpg",
+        quote: "“독후감은 잘 보이기 위한 글이 아니라, 책 속의 한 줄에 기대어 내 진짜 마음과 솔직하게 대화하는 시간이야.”",
+        desc: "여름방학 학교 도서실을 배경으로, 숙제라는 부담감을 벗어나 자신의 솔직한 감정을 글 한 줄에 솔직히 담아내며 자라나는 아이들의 마음 성장기."
+      },
+      {
+        no: 6,
+        callNo: "818-김52ㄱ",
+        section: "종합자료실",
+        title: "고상하고 천박하게",
+        author: "김사월 ; 이훤 지음",
+        publisher: "열린책들",
+        pubYear: "2025",
+        isbn: "9788932924953",
+        coverUrl: "https://image.aladin.co.kr/product/35809/42/cover500/e462635171_1.jpg",
+        quote: "“우리는 언제나 가장 고상해지고 싶어 하면서도, 가장 절실할 땐 지극히 천박하고 진솔한 바닥을 드러내고 만다.”",
+        desc: "뮤지션 김사월과 시인 이훤이 오간 깊고 은밀한 편지들. 삶의 취약함과 아름다움을 숨김없이 마주하는 감성적인 예술 교환 산문집."
+      },
+      {
+        no: 7,
+        callNo: "334.2-송68ㅎ",
+        section: "종합자료실",
+        title: "혼자 죽는 사회: 사회적 부검으로 들여다본 한국인의 고독사",
+        author: "송인주 지음",
+        publisher: "김영사",
+        pubYear: "2026",
+        isbn: "9791173326639",
+        coverUrl: "https://image.aladin.co.kr/product/39820/4/cover500/k062130603_1.jpg",
+        quote: "“고독사는 결코 개인의 나약함 때문이 아니라, 서로의 고립을 방치한 우리 사회의 단절이 남긴 아픈 흔적이다.”",
+        desc: "현장 데이터와 사회적 부검 기법으로 고독사의 실제 경로를 정밀하게 추적하고, 누구도 홀로 남겨지지 않는 연대의 안전망을 고민하는 르포르타주."
+      },
+      {
+        no: 8,
+        callNo: "811.7-창48창-535",
+        section: "종합자료실",
+        title: "러브 온 더 락: 고선경 시집",
+        author: "고선경 지음",
+        publisher: "창비",
+        pubYear: "2026",
+        isbn: "9788936425357",
+        coverUrl: "https://image.aladin.co.kr/product/39066/11/cover500/8936425358_1.jpg",
+        quote: "“얼음 잔 속에 덜렁 남겨진 사랑처럼, 차갑고도 눈부시게 녹아내리며 비로소 농밀해지는 우리의 밤.”",
+        desc: "청춘의 방황과 일상의 미세한 균열을 특유의 감각적이고 위트 있는 언어로 경쾌하면서도 쓸쓸하게 빚어낸 고선경 시인의 두 번째 시집."
+      },
+      {
+        no: 9,
+        callNo: "813.7-김84ㅌ=2",
+        section: "종합자료실",
+        title: "태양 아래 올리브: 김초엽 장편소설",
+        author: "김초엽 지음",
+        publisher: "자이언트북스",
+        pubYear: "2026",
+        isbn: "9791191824582",
+        coverUrl: "https://image.aladin.co.kr/product/39987/24/cover500/k512130727_3.jpg",
+        quote: "“작열하는 태양 아래에서도 올리브 잎사귀는 묵묵히 은빛을 반사하며, 살아 있음을 증명하고 있었다.”",
+        desc: "빛과 어둠이 교차하는 올리브 숲을 무대로 인간과 비인간, 흉터와 재생의 시간을 김초엽 특유의 따뜻하고 정교한 SF적 시선으로 담아낸 장편소설."
+      },
+      {
+        no: 10,
+        callNo: "982.02-유58ㅇ-3=2",
+        section: "종합자료실",
+        title: "유럽 도시 기행. 3: 마드리드, 바르셀로나, 리스본, 뽀르투 편",
+        author: "유시민 지음",
+        publisher: "생각의길",
+        pubYear: "2026",
+        isbn: "9788965138310",
+        coverUrl: "https://image.aladin.co.kr/product/39715/59/cover500/8965138310_1.jpg",
+        quote: "“도시는 인간의 온갖 욕망과 좌절, 그리고 역사가 차곡차곡 쌓여 빚어낸 거대한 야외 박물관이다.”",
+        desc: "이베리아반도의 네 도시가 품은 찬란한 예술과 비극적 역사, 골목마다 서려 있는 인간의 자취를 유시민 특유의 인문학적 통찰로 누비는 기행문."
+      }
+    ];
+
+    let activeFilter = 'all';
+
+    // 도서관 정보나루 상세 API 비동기 조회 (표지 고화질 유지)
+    async function updateCoverFromLibraryAPI(book) {
+      try {
+        const apiUrl = `https://data4library.kr/api/srchDtlList?authKey=${AUTH_KEY}&isbn13=${book.isbn}&format=json`;
+        const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(apiUrl)}`;
+        
+        const res = await fetch(proxyUrl);
+        const data = await res.json();
+        const parsed = JSON.parse(data.contents);
+        
+        if (parsed.response && parsed.response.detail && parsed.response.detail[0]) {
+          const apiImg = parsed.response.detail[0].book.bookImageURL;
+          if (apiImg && apiImg.startsWith('http')) {
+            book.coverUrl = apiImg;
+            const imgEl = document.getElementById(`img-${book.isbn}`);
+            if (imgEl) {
+              imgEl.src = apiImg;
+            }
+          }
+        }
+      } catch (err) {
+        // 네트워크 제한 시 기본 매핑된 coverUrl 유지
+      }
+    }
+
+    // 카드 렌더링
+    function renderCards() {
+      const grid = document.getElementById('bookGrid');
+      grid.innerHTML = '';
+
+      const filtered = books.filter(b => {
+        if (activeFilter === 'all') return true;
+        return b.section.includes(activeFilter);
+      });
+
+      filtered.forEach((book) => {
+        const isChild = book.section.includes('어린이');
+        const tagClass = isChild ? 'tag-child' : 'tag-adult';
+        const tagIcon = isChild ? 'fa-seedling' : 'fa-book-open';
+
+        const card = document.createElement('div');
+        card.className = 'book-card';
+        card.onclick = () => openModal(book);
+
+        card.innerHTML = `
+          <!-- 문장 하이라이트 영역 -->
+          <div class="quote-box">
+            <div class="quote-mark">“</div>
+            <div class="quote-pill"><i class="fa-solid fa-feather-pointed"></i> 책 속 한 문장</div>
+            <div class="quote-text">${book.quote}</div>
+          </div>
+
+          <!-- 도서 서지 바디 영역 -->
+          <div class="book-body">
+            <div class="cover-wrapper">
+              <img src="${book.coverUrl}" 
+                   alt="${book.title}" 
+                   class="book-cover" 
+                   id="img-${book.isbn}" 
+                   loading="lazy"
+                   onerror="this.onerror=null; this.src='https://via.placeholder.com/120x170/e8e2d8/555555?text=${encodeURIComponent(book.title)}';" />
+            </div>
+            <div class="book-info">
+              <div>
+                <span class="location-tag ${tagClass}">
+                  <i class="fa-solid ${tagIcon}"></i> [오송] ${book.section}
+                </span>
+                <h2 class="book-title" title="${book.title}">${book.title}</h2>
+                <p class="book-author">${book.author}</p>
+                <p class="book-meta">${book.publisher} · ${book.pubYear}</p>
+              </div>
+              <div class="call-number">
+                <i class="fa-solid fa-tag"></i> <span>${book.callNo}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 카드 하단 버튼 가이드 -->
+          <div class="card-footer">
+            <span>책 소개 더보기</span>
+            <i class="fa-solid fa-arrow-right"></i>
+          </div>
+        `;
+        grid.appendChild(card);
+
+        // 도서관 정보나루 실시간 확인 병행
+        updateCoverFromLibraryAPI(book);
+      });
+    }
+
+    // 필터링
+    function filterBooks(type) {
+      activeFilter = type;
+      document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.classList.remove('active');
+        if (btn.innerText.includes(type) || (type === 'all' && btn.innerText.includes('전체'))) {
+          btn.classList.add('active');
+        }
+      });
+      renderCards();
+    }
+
+    // 문장 복사 기능
+    function copyQuoteText(text) {
+      navigator.clipboard.writeText(text).then(() => {
+        alert('문장이 클립보드에 복사되었습니다.');
+      }).catch(() => {
+        alert('복사에 실패했습니다.');
+      });
+    }
+
+    // 모달 제어
+    function openModal(book) {
+      const modal = document.getElementById('detailModal');
+      const body = document.getElementById('modalBody');
+
+      body.innerHTML = `
+        <div class="modal-quote-wrap">
+          <div class="quote-pill"><i class="fa-solid fa-feather-pointed"></i> 책 속 한 문장</div>
+          <div class="modal-quote">
+            ${book.quote}
+          </div>
+        </div>
+        
+        <p class="modal-desc">
+          ${book.desc}
+        </p>
+
+        <div class="modal-grid">
+          <div class="cover-wrapper">
+            <img src="${book.coverUrl}" alt="${book.title}" class="book-cover" />
+          </div>
+          <div>
+            <div class="modal-meta-item"><b>도 서 명</b> <span style="font-weight:600; color:#1e293b;">${book.title}</span></div>
+            <div class="modal-meta-item"><b>저&nbsp;&nbsp;&nbsp;&nbsp;자</b> <span>${book.author}</span></div>
+            <div class="modal-meta-item"><b>출 판 사</b> <span>${book.publisher} (${book.pubYear})</span></div>
+            <div class="modal-meta-item"><b>자 료 실</b> <span>[오송] ${book.section}</span></div>
+            <div class="modal-meta-item"><b>청구기호</b> <span style="font-family:monospace; font-weight:bold; color:var(--accent-color); background:#f5eee6; padding:2px 6px; border-radius:4px;">${book.callNo}</span></div>
+            <div class="modal-meta-item"><b>I S B N</b> <span style="font-family:monospace;">${book.isbn}</span></div>
+          </div>
+        </div>
+
+        <div class="modal-actions">
+          <button class="action-btn" onclick="copyQuoteText('${book.quote.replace(/'/g, "\\'")}')">
+            <i class="fa-regular fa-copy"></i> 문장 복사
+          </button>
+          <button class="action-btn" onclick="closeModal()" style="background:var(--primary-color); color:#fff; border-color:var(--primary-color);">
+            닫기
+          </button>
+        </div>
+      `;
+
+      modal.classList.add('active');
+    }
+
+    function closeModal(e) {
+      if (!e || e.target.id === 'detailModal' || e.target.className === 'modal-close' || e.target.classList.contains('action-btn')) {
+        document.getElementById('detailModal').classList.remove('active');
+      }
+    }
+
+    // ESC 키로 닫기
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeModal();
+    });
+
+    // 초기 실행
+    renderCards();
+  </script>
+</body>
+</html>
